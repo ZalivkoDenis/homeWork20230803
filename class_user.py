@@ -16,14 +16,19 @@
 class User:
 
     def __init__(self, first_name: str, last_name: str, login: str, password: str = ""):
+        error_user_init_string: str = f'{"-" * 40}\nОшибка!!!\nПользователь "{first_name} {last_name}" ' \
+                  f'c логином "{login}" не создан.'
         self.first_name = first_name
         self.last_name = last_name
-        self.login = login
-        try:
+        try:  # Check LOGIN
+            self.login = login
+        except ValueError:
+            print(error_user_init_string)
+            raise
+        try:  # Check PASSWORD
             self.password = password
         except ValueError:
-            print(f'{"-" * 40}\nОшибка!!!\nПользователь "{self.first_name} {self.last_name}" '
-                  f'c логином "{self.login}" не создан.')
+            print(error_user_init_string)
             raise
 
     @property
@@ -48,6 +53,8 @@ class User:
 
     @login.setter
     def login(self, login: str):
+        if len(login) < 5:
+            raise ValueError(f'({login}!!!) Логин должен содержать не менее 5 символов')
         self._login = login
 
     @property
@@ -101,6 +108,12 @@ if __name__ == '__main__':
         users.append(User('Aleksandr', 'Situn', 'AleksandrSitun'))  # user-003
     except ValueError as ve:
         print(ve)
+
+    try:  # Login name error
+        users.append(User('Denis', 'Zalivko', 'Den', 'qwerty12345'))  # user-002
+    except ValueError as ve:
+        print(ve)
+
 
     print(f'\n{"-" * 40}\n{"Пользователи:".center(40)}\n{"-" * 40}\n')
     for index in range(len(users)):
